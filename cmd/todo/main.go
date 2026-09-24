@@ -49,7 +49,7 @@ func main(){
 			log.Fatalf("Error while saving: %v", err)
 		}
 
-		fmt.Printf("Task status [%d] was updated successful", *statusCmd)
+		fmt.Printf("Task status [%d] was updated successful \n", *statusCmd)
 		return
 
 	}
@@ -69,12 +69,12 @@ func main(){
 
 		filteredTasks, err := model.FilteredList(tasks, filter)
 		if err != nil {
-			fmt.Printf("Not acceptable filter for list")
+			fmt.Println("Not acceptable filter for list")
 			return
 		}
 
 		if len(filteredTasks) == 0{
-			fmt.Printf("There no tasks with status: %s", filter)
+			fmt.Printf("There no tasks with status: %s \n", filter)
 			return
 		}
 
@@ -95,8 +95,8 @@ func main(){
 	}
 
 	fmt.Println("Tip: ")
-	fmt.Println("  go run ./cmd/todo -add \"Taskname\"")
-	fmt.Println("  go run ./cmd/todo -list [all|todo|doing|done]")
-	fmt.Println("  go run ./cmd/todo -status ID -to [todo|doing|done]")
-	fmt.Println("  go run ./cmd/todo -delete ID")
+	fmt.Println("  go run ./ -add \"Taskname\"")
+	fmt.Println("  go run ./ -list [all|todo|doing|done]")
+	fmt.Println("  go run ./ -status ID -to [todo|doing|done]")
+	fmt.Println("  go run ./ -delete ID")
 }
