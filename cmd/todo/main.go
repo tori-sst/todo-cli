@@ -31,7 +31,7 @@ func main(){
 		if err := store.Save(tasks); err != nil{
 			log.Fatalf("Error while saving: %v", err)
 		}
-		fmt.Printf("Task \"%s\" added successful \n", *addCmd)
+		fmt.Printf("Task \"%s\" added successfully \n", *addCmd)
 		return
 	}
 
@@ -49,7 +49,7 @@ func main(){
 			log.Fatalf("Error while saving: %v", err)
 		}
 
-		fmt.Printf("Task status [%d] was updated successful \n", *statusCmd)
+		fmt.Printf("Task status [%d] was updated successfully \n", *statusCmd)
 		return
 
 	}
@@ -69,12 +69,12 @@ func main(){
 
 		filteredTasks, err := model.FilteredList(tasks, filter)
 		if err != nil {
-			fmt.Println("Not acceptable filter for list")
+			fmt.Println("Invalid filter for list")
 			return
 		}
 
 		if len(filteredTasks) == 0{
-			fmt.Printf("There no tasks with status: %s \n", filter)
+			fmt.Printf("There are no tasks with status: %s \n", filter)
 			return
 		}
 
