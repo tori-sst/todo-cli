@@ -13,8 +13,10 @@ const fileName = "tasks.yaml"
 
 func main(){
 	addCmd := flag.String("add", "", "Add a new task (name it)")
-	listCmd := flag.Bool("list", false, "Show task list")
-	deleteCmd := flag.Int("delete", 0, "Delete task by its ID")
+	listCmd := flag.String("list", "", "Show task list")
+	deleteCmd := flag.Int("delete", 0, "Delete task by ID")
+	statusCmd := flag.Int("status", 0, "Change status by ID")
+	toCmd := flag.String("to", "", "Specify new status: todo | doing | done")
 
 	flag.Parse()
 
@@ -33,13 +35,51 @@ func main(){
 		return
 	}
 
-	if *listCmd {
-		if len(tasks) == 0{
-			fmt.Println("They're no tasks")
+	if *statusCmd != 0{
+		if *toCmd == ""{
+			fmt.Println("Specify new status: todo | doing | done")
 			return
 		}
+
+		updatedTask, err := model.UpdateStatus(tasks, *statusCmd, *toCmd)
+		if err != nil{
+			log.Fatalf("Error while updating")
+		}
+		if err := store.Save(updatedTask); err != nil{
+			log.Fatalf("Error while saving: %v", err)
+		}
+
+		fmt.Printf("Task status [%d] was updated successful", *statusCmd)
+		return
+
+	}
+
+	isListSet := false
+	flag.Visit(func(f *flag.Flag) {
+		if f.Name == "list" {
+			isListSet = true
+		}
+	})
+
+	if isListSet {
+		filter := *listCmd
+		if filter == ""{
+			filter = "all"
+		}
+
+		filteredTasks, err := model.FilteredList(tasks, filter)
+		if err != nil {
+			fmt.Printf("Not acceptable filter for list")
+			return
+		}
+
+		if len(filteredTasks) == 0{
+			fmt.Printf("There no tasks with status: %s", filter)
+			return
+		}
+
 		fmt.Println("Task list: ")
-		for _, t :=  range tasks{
+		for _, t :=  range filteredTasks{
 			fmt.Printf("[%d] %s (Status: %s) - %s \n", t.ID, t.Title, t.Status, t.CreatedAt.Format("2006-01-02 15:04"))
 		}
 		return
@@ -54,5 +94,9 @@ func main(){
 		return
 	}
 
-	fmt.Println("Tip: go run ./cmd/todo -add \"Taskname\" | -list | -delete ID")
+	fmt.Println("Tip: ")
+	fmt.Println("  go run ./cmd/todo -add \"Taskname\"")
+	fmt.Println("  go run ./cmd/todo -list [all|todo|doing|done]")
+	fmt.Println("  go run ./cmd/todo -status ID -to [todo|doing|done]")
+	fmt.Println("  go run ./cmd/todo -delete ID")
 }
